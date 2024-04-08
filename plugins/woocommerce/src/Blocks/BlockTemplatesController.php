@@ -474,10 +474,10 @@ class BlockTemplatesController {
 
 			// At this point the template only exists in the Blocks filesystem, if is a taxonomy-product_cat/tag/attribute.html template
 			// let's use the archive-product.html template from Blocks.
-			if ( BlockTemplateUtils::template_is_eligible_for_fallback( $template_slug ) ) {
-				$registered_template = BlockTemplateUtils::get_template( $template_slug );
-				$template_file       = $this->get_template_path_from_woocommerce( $registered_template->fallback_template );
-				$templates[]         = BlockTemplateUtils::create_new_block_template_object( $template_file, $template_type, $template_slug, false );
+			$registered_template = BlockTemplateUtils::get_template( $template_slug );
+			if ( $registered_template && isset( $registered_template->fallback_template ) ) {
+				$template_file = $this->get_template_path_from_woocommerce( $registered_template->fallback_template );
+				$templates[]   = BlockTemplateUtils::create_new_block_template_object( $template_file, $template_type, $template_slug, false );
 				continue;
 			}
 
