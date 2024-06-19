@@ -101,6 +101,7 @@ class CheckoutFields {
 				'required'       => true,
 				'hidden'         => false,
 				'autocomplete'   => 'email',
+				'type'           => 'email',
 				'autocapitalize' => 'none',
 				'index'          => 0,
 			],
