@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Mark Checkout email field as type email to show relevant keyboard when filling.  </details>  <details>  <summary>Changelog Entry Comment</summary>
