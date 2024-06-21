@@ -5,7 +5,9 @@
 	"icon": "miniCartAlt",
 	"description": "Display a button for shoppers to quickly view their cart.",
 	"category": "woocommerce",
-	"keywords": [ "WooCommerce" ],
+	"keywords": [
+		"WooCommerce"
+	],
 	"textdomain": "woocommerce",
 	"supports": {
 		"html": false,
@@ -60,6 +62,6 @@
 			"type": "string"
 		}
 	},
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"$schema": "https://schemas.wp.org/trunk/block.json"
 }
