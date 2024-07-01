@@ -292,4 +292,6 @@ if ( ! isProduction || WC_ADMIN_PHASE === 'development' ) {
 	}
 }
 
+webpackConfig.devtool = 'source-map';
+
 module.exports = webpackConfig;
