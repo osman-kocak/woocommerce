@@ -327,7 +327,13 @@ class CartShippingRateSchema extends AbstractSchema {
 	 */
 	protected function get_rate_prop( $rate, $prop ) {
 		$getter = 'get_' . $prop;
-		return \is_callable( array( $rate, $getter ) ) ? $rate->$getter() : '';
+		if ( \is_callable( array( $rate, $getter ) ) ) {
+			return $rate->$getter();
+		}
+		if ( ! empty( $rate->$prop ) ) {
+			return $rate->$prop;
+		}
+		return '';
 	}
 
 	/**
