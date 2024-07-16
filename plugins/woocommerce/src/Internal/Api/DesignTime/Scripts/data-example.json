@@ -1,0 +1,103 @@
+{
+	"routes": {
+		"orders/(?P<id>[\\d]+)" : {
+			"namespace": "wc/v3",
+			"methods": [
+				"GET",
+				"POST",
+				"PUT",
+				"PATCH",
+				"DELETE"
+			],
+			"endpoints": [
+				{
+					"methods": [
+						"GET"
+					],
+					"args": {},
+					"_doc": {
+						"name": "Get orders",
+						"description": "Get the details of an existing order."
+					}
+				},
+				{
+					"methods": [
+						"POST",
+						"PUT",
+						"PATCH"
+					],
+					"_doc": {
+						"name": "Update order",
+						"description": "Update an existing order.",
+						"args_object_type": "order"
+					}
+				},
+				{
+					"methods": [
+						"DELETE"
+					],
+					"args": {},
+					"_doc": {
+						"name": "Delete order",
+						"description": "Delete an existing order."
+					}
+				}
+			],
+			"schema": {
+				"$schema": "http://json-schema.org/draft-04/schema#",
+				"title": "shop_order",
+				"type": "object",
+				"_doc": {
+					"object_type": "order"
+				}
+			},
+			"_doc": {
+				"category": "orders"
+			}
+		}
+	},
+	"categories": {
+		"orders": {
+			"name": "Orders",
+			"description": "Allows to manage orders."
+		}
+	},
+	"object_definitions": {
+		"order": {
+			"number": {
+				"description": "Order number.",
+				"type": "string",
+				"context": [
+					"view",
+					"edit"
+				],
+				"readonly": true
+			},
+			"billing": {
+				"description": "Billing address.",
+				"type": "object",
+				"_doc": {
+					"object_type": "order"
+				}
+			}
+		},
+		"billing_address": {
+			"first_name": {
+				"description": "First name.",
+				"type": "string",
+				"context": [
+					"view",
+					"edit"
+				]
+			},
+			"company": {
+				"description": "Company name.",
+				"type": "string",
+				"context": [
+					"view",
+					"edit"
+				]
+			}
+		}
+	}
+}

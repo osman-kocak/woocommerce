@@ -35,12 +35,12 @@ class LegacyProxy {
 	 * @throws \Exception The requested class has a namespace starting with ' Automattic\WooCommerce', or there was an error creating an instance of the class.
 	 */
 	public function get_instance_of( string $class_name, ...$args ) {
-		if ( StringUtil::starts_with( $class_name, 'Automattic\\WooCommerce\\' ) ) {
+		/*if ( StringUtil::starts_with( $class_name, 'Automattic\\WooCommerce\\' ) ) {
 			throw new \Exception(
 				'The LegacyProxy class is not intended for getting instances of classes whose namespace starts with \'Automattic\\WooCommerce\', please use ' .
 				Definition::INJECTION_METHOD . ' method injection or the instance of ' . ContainerInterface::class . ' for that.'
 			);
-		}
+		}*/
 
 		// If a class has a dedicated method to obtain a instance, use it.
 		$method = 'get_instance_of_' . strtolower( $class_name );

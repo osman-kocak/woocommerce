@@ -8,6 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Hooks;
 use Automattic\WooCommerce\Internal\AssignDefaultCategory;
 use Automattic\WooCommerce\Internal\BatchProcessing\BatchProcessingController;
 use Automattic\WooCommerce\Internal\ComingSoon\ComingSoonCacheInvalidator;
@@ -315,7 +316,7 @@ final class WooCommerce {
 		$container->get( ProductDownloadDirectories::class );
 		$container->get( DownloadPermissionsAdjuster::class );
 		$container->get( AssignDefaultCategory::class );
-		$container->get( DataRegenerator::class );
+		//$container->get( DataRegenerator::class );
 		$container->get( LookupDataStore::class );
 		$container->get( MatchImageBySKU::class );
 		$container->get( RestockRefundedItemsAdjuster::class );
@@ -338,6 +339,8 @@ final class WooCommerce {
 		foreach ( $hook_register_classes as $hook_register_class ) {
 			$hook_register_class->register();
 		}
+
+		Hooks::init();
 	}
 
 	/**

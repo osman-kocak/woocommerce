@@ -65,3 +65,32 @@ $GLOBALS['woocommerce'] = WC();
 if ( class_exists( \Automattic\Jetpack\Connection\Rest_Authentication::class ) ) {
 	\Automattic\Jetpack\Connection\Rest_Authentication::init();
 }
+
+//$c1=new \Automattic\WooCommerce\Class1();
+//add_action('fizzbuzz', [$c1, 'foobar'], 10, 2);
+//add_action('fizzbuzz', [new \Automattic\WooCommerce\Class2(), 'foobar'], 10, 2);
+//add_action('fizzbuzz', [new \Automattic\WooCommerce\Class3(), 'foobar'], 10, 2);
+
+\Automattic\WooCommerce\Hooks::register_filter('fizzbuzz', new \Automattic\WooCommerce\Class1(), 'foobar', 10, 2);
+$id1=\Automattic\WooCommerce\Hooks::register_filter('fizzbuzz', \Automattic\WooCommerce\Class2::class, 'foobar', 20, 2);
+$id2=\Automattic\WooCommerce\Hooks::register_filter('fizzbuzz', \Automattic\WooCommerce\Class2::class, 'foobar', 20, 2);
+\Automattic\WooCommerce\Hooks::register_filter('fizzbuzz', fn() => new \Automattic\WooCommerce\Class3(), 'foobar', 10, 2);
+\Automattic\WooCommerce\Hooks::register_filter('fizzbuzz', function() { \Automattic\WooCommerce\Class4::init(); }, Automattic\WooCommerce\Class4::class . '::foobar', 10, 2);
+//echo "Id1: $id1\n";
+//echo "Id2: $id1\n";
+
+//apply_filters('fizzbuzz',1,'fizzbuzz');
+
+//\Automattic\WooCommerce\Hooks::remove_hook('fizzbuzz', \Automattic\WooCommerce\Class2::class, 'foobar', 20, 2);
+//\Automattic\WooCommerce\Hooks::remove_hook('fizzbuzz', \Automattic\WooCommerce\Class2::class, 'foobar', 20, 2);
+
+/*
+\Automattic\WooCommerce\Hooks::remove_hook(
+    'woocommerce_debug_tools',
+    \Automattic\WooCommerce\Internal\ProductAttributesLookup\DataRegenerator::class,
+    'add_initiate_regeneration_entry_to_tools_array',
+    999
+);
+*/
+
+//apply_filters('fizzbuzz',1,'fizzbuzz');
