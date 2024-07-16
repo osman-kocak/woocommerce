@@ -222,7 +222,7 @@ class FilterClausesGenerator implements ClausesGeneratorInterface {
 
 		return array_filter(
 			$all_terms,
-			function( $term ) use ( $taxonomy ) {
+			function ( $term ) use ( $taxonomy ) {
 				return $term->taxonomy === $taxonomy;
 			}
 		);
@@ -263,11 +263,15 @@ class FilterClausesGenerator implements ClausesGeneratorInterface {
 	 *
 	 * @param float  $price_filter Price filter to apply.
 	 * @param string $column Price being filtered (min or max).
-	 * @param string $operator Comparison operator for column.
+	 * @param string $operator Comparison operator for column. Accepts '>=' or '<='.
 	 * @return string Constructed query.
 	 */
 	private function get_price_filter_query_for_displayed_taxes( $price_filter, $column = 'min_price', $operator = '>=' ) {
 		global $wpdb;
+
+		if ( ! in_array( $operator, array( '>=', '<=' ), true ) ) {
+			return '';
+		}
 
 		// Select only used tax classes to avoid unwanted calculations.
 		$product_tax_classes = $wpdb->get_col( "SELECT DISTINCT tax_class FROM {$wpdb->wc_product_meta_lookup};" );
@@ -282,7 +286,7 @@ class FilterClausesGenerator implements ClausesGeneratorInterface {
 		foreach ( $product_tax_classes as $tax_class ) {
 			$adjusted_price_filter = $this->adjust_price_filter_for_tax_class( $price_filter, $tax_class );
 			$or_queries[]          = $wpdb->prepare(
-				'( wc_product_meta_lookup.tax_class = %s AND wc_product_meta_lookup.`' . esc_sql( $column ) . '` ' . esc_sql( $operator ) . ' %f )',
+				'( wc_product_meta_lookup.tax_class = %s AND wc_product_meta_lookup.`' . esc_sql( $column ) . '` ' . $operator . ' %f )',
 				$tax_class,
 				$adjusted_price_filter
 			);
@@ -292,7 +296,7 @@ class FilterClausesGenerator implements ClausesGeneratorInterface {
 		return $wpdb->prepare(
 			' AND (
 				wc_product_meta_lookup.tax_status = "taxable" AND ( 0=1 OR ' . implode( ' OR ', $or_queries ) . ')
-				OR ( wc_product_meta_lookup.tax_status != "taxable" AND wc_product_meta_lookup.`' . esc_sql( $column ) . '` ' . esc_sql( $operator ) . ' %f )
+				OR ( wc_product_meta_lookup.tax_status != "taxable" AND wc_product_meta_lookup.`' . esc_sql( $column ) . '` ' . $operator . ' %f )
 			) ',
 			$price_filter
 		);
