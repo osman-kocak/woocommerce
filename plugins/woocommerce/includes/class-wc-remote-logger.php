@@ -112,7 +112,7 @@ class WC_Remote_Logger {
 			);
 		} catch ( Exception $e ) {
 			// Log the error locally if the remote logging fails.
-			$local_logger->error( 'Remote logging failed: ' . $e->getMessage(), $body );
+			$this->local_logger->error( 'Remote logging failed: ' . $e->getMessage(), $body );
 		}
 
 		$this->record_log_timestamp();

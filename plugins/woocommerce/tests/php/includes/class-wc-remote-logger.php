@@ -27,6 +27,7 @@ class WC_Remote_Logger_Test extends \WC_Unit_Test_Case {
 		$this->cleanup_filters();
 
 		delete_option( 'woocommerce_feature_remote_logging_enabled' );
+		delete_transient( WC_Remote_Logger::THROTTLE_TRANSIENT );
 	}
 
 	/**
@@ -270,8 +271,6 @@ class WC_Remote_Logger_Test extends \WC_Unit_Test_Case {
 		set_transient( WC_Remote_Logger::THROTTLE_TRANSIENT, $throttle_data, WC_Remote_Logger::THROTTLE_INTERVAL );
 
 		$this->logger->log( 'error', 'Test message' );
-
-		delete_transient( WC_Remote_Logger::THROTTLE_TRANSIENT );
 	}
 
 
@@ -282,7 +281,6 @@ class WC_Remote_Logger_Test extends \WC_Unit_Test_Case {
 	 */
 	public function test_log_filtered_message_null() {
 		$this->logger = $this->getMockBuilder( WC_Remote_Logger::class )
-							->setConstructorArgs( array( $mock_local_logger ) )
 							->onlyMethods( array( 'is_remote_logging_allowed' ) )
 							->getMock();
 
@@ -297,5 +295,74 @@ class WC_Remote_Logger_Test extends \WC_Unit_Test_Case {
 		);
 
 		$this->logger->log( 'error', 'Test message' );
+	}
+
+	/**
+	 * Test successfully sends log.
+	 */
+	public function test_log_successful() {
+		$this->logger = $this->getMockBuilder( WC_Remote_Logger::class )
+							->onlyMethods( array( 'is_remote_logging_allowed' ) )
+							->getMock();
+
+		$mock_logger = $this->createMock( \WC_Logger::class );
+		$this->logger->method( 'is_remote_logging_allowed' )->willReturn( true );
+
+		// Mock wp_safe_remote_post using pre_http_request filter.
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args, $url ) {
+				if ( 'https://public-api.wordpress.com/rest/v1.1/logstash' === $url ) {
+					$this->assertArrayHasKey( 'body', $args );
+					$this->assertArrayHasKey( 'headers', $args );
+					return array(
+						'response' => array(
+							'code'    => 200,
+							'message' => 'OK',
+						),
+						'body'     => wp_json_encode( array( 'success' => true ) ),
+					);
+				}
+				return $preempt;
+			},
+			10,
+			3
+		);
+
+		$this->logger->log( 'error', 'Test message' );
+		$this->assertNotEmpty( get_transient( WC_Remote_Logger::THROTTLE_TRANSIENT ) );
+	}
+
+	/**
+	 * Test log method when remote logging fails.
+	 **/
+	public function test_log_remote_logging_failure() {
+		$mock_local_logger = $this->createMock( \WC_Logger::class );
+		$mock_local_logger->expects( $this->once() )
+			->method( 'error' );
+
+		$this->logger = $this->getMockBuilder( WC_Remote_Logger::class )
+							->setConstructorArgs( array( $mock_local_logger ) )
+							->onlyMethods( array( 'is_remote_logging_allowed' ) )
+							->getMock();
+
+		$mock_logger = $this->createMock( \WC_Logger::class );
+		$this->logger->method( 'is_remote_logging_allowed' )->willReturn( true );
+
+		// Mock wp_safe_remote_post to throw an exception using pre_http_request filter.
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args, $url ) {
+				if ( 'https://public-api.wordpress.com/rest/v1.1/logstash' === $url ) {
+					throw new Exception( 'Remote logging failed: A valid URL was not provided.' );
+				}
+				return $preempt;
+			},
+			10,
+			3
+		);
+
+		$this->logger->log( 'error', 'Test message' );
+		$this->assertNotEmpty( get_transient( WC_Remote_Logger::THROTTLE_TRANSIENT ) );
 	}
 }
