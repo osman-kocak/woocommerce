@@ -263,4 +263,4 @@ return array(
 	'YE' => __( 'Yemen', 'woocommerce' ),
 	'ZM' => __( 'Zambia', 'woocommerce' ),
 	'ZW' => __( 'Zimbabwe', 'woocommerce' ),
-);
+	'TRNC' => __( 'North Cyprus', 'woocommerce' ),
